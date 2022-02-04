@@ -18,12 +18,13 @@ func main() {
 		return
 	}
 
-	connectAddress := "123"
+	targetName := "Dark Circus"
 	ch := make(chan bluetooth.ScanResult, 1)
 
 	err = adapter.Scan(func(adapter *bluetooth.Adapter, result bluetooth.ScanResult) {
-		println("found device:", result.Address.String(), result.RSSI, result.LocalName())
-		if result.Address.String() == connectAddress {
+		fmt.Printf("%+v, payload: %+v", result, result.AdvertisementPayload)
+		//		println("found device:", result.Address.String(), result.RSSI, result.LocalName())
+		if result.LocalName() == targetName {
 			adapter.StopScan()
 			ch <- result
 		}
