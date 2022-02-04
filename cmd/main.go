@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/milligan22963/circus/pkg/management"
+	local "github.com/milligan22963/circus/pkg/management"
 
 	"tinygo.org/x/bluetooth"
 )
@@ -38,7 +38,7 @@ func main() {
 	var device *bluetooth.Device
 	result := <-ch
 
-	var skull management.Skull
+	var skull local.Skull
 	err = skull.Connect(adapter, result.Address)
 	if err != nil {
 		println(err.Error())
