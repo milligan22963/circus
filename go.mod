@@ -1,4 +1,4 @@
-module cmd/main.go
+module github.com/milligan22963/circus/cmd/main.go
 
 go 1.17
 
