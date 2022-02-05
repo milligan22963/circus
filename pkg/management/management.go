@@ -2,6 +2,8 @@
 package management
 
 import (
+	"fmt"
+
 	"tinygo.org/x/bluetooth"
 )
 
@@ -17,4 +19,11 @@ func (skull *Skull) Connect(adapter *bluetooth.Adapter, bdAddr bluetooth.Address
 	}
 	skull.ActiveDevice = device
 	return nil
+}
+
+func (skull *Skull) Disconnect() error {
+	if skull.ActiveDevice != nil {
+		return skull.ActiveDevice.Disconnect()
+	}
+	return fmt.Errorf("skull not connected")
 }

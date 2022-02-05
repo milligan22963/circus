@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
 
 	local "github.com/milligan22963/circus/pkg/management"
 
@@ -35,7 +38,6 @@ func main() {
 		return
 	}
 
-	var device *bluetooth.Device
 	result := <-ch
 
 	var skull local.Skull
@@ -47,7 +49,13 @@ func main() {
 
 	println("connected to ", result.Address.String())
 
-	err = device.Disconnect()
+	signals := make(chan os.Signal, 1)
+
+	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
+
+	<-signals
+
+	err = skull.Disconnect()
 	if err != nil {
 		println(err)
 	}
