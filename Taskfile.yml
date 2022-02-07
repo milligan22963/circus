@@ -12,5 +12,4 @@ tasks:
     silent: true
   build:
     cmds:
-      - rm -f circus
       - go build -o circus main.go
