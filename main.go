@@ -6,9 +6,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	local "pkg/management"
+	"github.com/milligan22963/circus/cmd"
+	local "github.com/milligan22963/circus/pkg/management"
 
-	"github.com/milligan22963/cmra/cmd/subcmd"
 	"github.com/spf13/cobra"
 	"tinygo.org/x/bluetooth"
 )
@@ -26,10 +26,10 @@ func main() {
 		},
 	}
 
-	rootCmd.AddCommand(subcmd.ServerCmd)
-	subcmd.ServerCmd.Flags().String("config", "settings.yaml", "configuration file")
+	rootCmd.AddCommand(cmd.ServerCmd)
+	cmd.ServerCmd.Flags().String("config", "settings.yaml", "configuration file")
 
-	rootCmd.AddCommand(subcmd.VersionCmd)
+	rootCmd.AddCommand(cmd.VersionCmd)
 
 	if err := rootCmd.Execute(); err != nil {
 		println("failed to initialize: ", err.Error())
