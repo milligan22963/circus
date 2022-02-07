@@ -6,6 +6,9 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/milligan22963/circus/config"
+	"github.com/milligan22963/circus/pkg/web"
 )
 
 // HTTPResponse is a structure defining what a response should look like
@@ -35,12 +38,6 @@ func (server *ServerInstance) waitForExit() {
 }
 
 func (server *ServerInstance) Run(appConfig *config.AppConfiguration) {
-	defer func() {
-		if appConfig.Database != nil {
-			appConfig.Database.Close()
-		}
-	}()
-
 	webServer := web.WebServer{}
 
 	// server up the world

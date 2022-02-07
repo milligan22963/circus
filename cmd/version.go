@@ -2,6 +2,7 @@
 package cmd
 
 import (
+	"github.com/milligan22963/circus/pkg/version"
 	"github.com/spf13/cobra"
 )
 

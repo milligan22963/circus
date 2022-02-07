@@ -11,6 +11,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/milligan22963/afmlog"
+	"github.com/milligan22963/circus/config"
 )
 
 const (
@@ -27,10 +28,10 @@ func (webserver *WebServer) SetupWebserver(appConfig *config.AppConfiguration) {
 	httpServerDone := &sync.WaitGroup{}
 	router := mux.NewRouter().StrictSlash(true)
 
-	serverPort := appConfig.CameraConfiguration.WebServerSettings.Port
-	serverAddress := appConfig.CameraConfiguration.WebServerSettings.Host
+	serverPort := appConfig.CircusConfiguration.WebServerSettings.Port
+	serverAddress := appConfig.CircusConfiguration.WebServerSettings.Host
 	//	router.HandleFunc("/", webserver.GenerateHomePage)
-	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(appConfig.CameraConfiguration.WebServerSettings.FileRoot))))
+	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(appConfig.CircusConfiguration.WebServerSettings.FileRoot))))
 	server := &http.Server{Addr: serverAddress + ":" + strconv.Itoa(serverPort), Handler: router}
 
 	webserver.logger.Informationf("Address: %v, Port: %d", serverAddress, serverPort)
