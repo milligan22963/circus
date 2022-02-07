@@ -1,0 +1,14 @@
+website:
+  ws_host: "127.0.0.1"
+  ws_port: 8080
+  ws_root: "./web"
+
+log:
+  settings:
+    level: "Information"
+    trigger_level: "Error"
+    backlog: 500
+  formatters:
+    -
+      id: text
+      filename: "circus.log"
