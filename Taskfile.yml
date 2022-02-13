@@ -13,3 +13,6 @@ tasks:
   build:
     cmds:
       - go build -o circus main.go
+  run:
+    cmds:
+      - ./circus server --config settings.yaml

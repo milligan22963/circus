@@ -30,6 +30,8 @@ func (webserver *WebServer) SetupWebserver(appConfig *config.AppConfiguration) {
 
 	serverPort := appConfig.CircusConfiguration.WebServerSettings.Port
 	serverAddress := appConfig.CircusConfiguration.WebServerSettings.Host
+
+	fmt.Printf("port: %v, address: %v\n", serverPort, serverAddress)
 	//	router.HandleFunc("/", webserver.GenerateHomePage)
 	router.PathPrefix("/").Handler(http.StripPrefix("/", http.FileServer(http.Dir(appConfig.CircusConfiguration.WebServerSettings.FileRoot))))
 	server := &http.Server{Addr: serverAddress + ":" + strconv.Itoa(serverPort), Handler: router}

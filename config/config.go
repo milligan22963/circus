@@ -8,6 +8,7 @@ import (
 
 	"github.com/milligan22963/afmlog"
 	"gopkg.in/yaml.v2"
+	"tinygo.org/x/bluetooth"
 )
 
 type WebServerSettings struct {
@@ -28,6 +29,7 @@ const DefaultConfigPath = "settings.yaml"
 type AppConfiguration struct {
 	CircusConfiguration CircusConfiguration
 	AppActive           chan struct{}
+	Adapter             *bluetooth.Adapter
 }
 
 func (configuration *CircusConfiguration) LoadConfiguration(filename string) error {
@@ -49,10 +51,11 @@ func (appConfig *AppConfiguration) GetLogger() *afmlog.Log {
 }
 
 // NewSiteConfiguration creates an instance of the site configuration struct
-func NewSiteConfiguration(configFile string, initialDBNameConnect bool) *AppConfiguration {
+func NewSiteConfiguration(configFile string) *AppConfiguration {
 	appConfig := &AppConfiguration{
 		CircusConfiguration: CircusConfiguration{},
 		AppActive:           make(chan struct{}),
+		Adapter:             bluetooth.DefaultAdapter,
 	}
 
 	err := appConfig.CircusConfiguration.LoadConfiguration(configFile)

@@ -18,7 +18,7 @@ var ServerCmd = &cobra.Command{
 			panic("Unable to find config flag")
 		}
 
-		appConfig := config.NewSiteConfiguration(configFile, false)
+		appConfig := config.NewSiteConfiguration(configFile)
 
 		serverInstance := server.ServerInstance{}
 

@@ -7,6 +7,7 @@ require (
 	github.com/milligan22963/afmlog v0.0.3-0.20220119004058-4c0e604df9cc
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cobra v1.3.0
+	github.com/stianeikeland/go-rpio v4.2.0+incompatible
 	gopkg.in/yaml.v2 v2.4.0
 	tinygo.org/x/bluetooth v0.4.0
 )

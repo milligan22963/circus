@@ -2,8 +2,6 @@
 package management
 
 import (
-	"fmt"
-
 	"tinygo.org/x/bluetooth"
 )
 
@@ -21,14 +19,9 @@ func (skull *Skull) Connect(adapter *bluetooth.Adapter, bdAddr bluetooth.Address
 	return nil
 }
 
-func (skull *Skull) ProcessRFID(chipID string) {
-	// see if it is one we recognize and if in the right order
-
-}
-
 func (skull *Skull) Disconnect() error {
 	if skull.ActiveDevice != nil {
 		return skull.ActiveDevice.Disconnect()
 	}
-	return fmt.Errorf("skull not connected")
+	return nil
 }
