@@ -3,7 +3,10 @@ package artifacts
 
 import (
 	"fmt"
+	"time"
 
+	"github.com/milligan22963/afmlog"
+	"github.com/milligan22963/circus/config"
 	"github.com/milligan22963/circus/pkg/management"
 	"github.com/stianeikeland/go-rpio"
 	"tinygo.org/x/bluetooth"
@@ -16,6 +19,7 @@ type Artifact struct {
 
 type Artifacts struct {
 	artifacts []Artifact
+	logger    *afmlog.Log
 }
 
 func CreateArtifact(pinID uint) (*Artifact, error) {
@@ -63,10 +67,25 @@ func (a *Artifacts) connectToSkull(adapter *bluetooth.Adapter) *management.Skull
 	return skull
 }
 
-func (a *Artifacts) Monitor(adapter *bluetooth.Adapter) {
-	if a.Ready() {
-		// Connect to skull
-		a.connectToSkull(adapter)
+func (a *Artifacts) SetupArtifacts(appConfig *config.AppConfiguration) {
+	a.logger = appConfig.GetLogger()
+
+	// create each of the artifacts
+	go a.Monitor(appConfig.Adapter, appConfig.AppActive)
+
+	<-appConfig.AppActive
+}
+
+func (a *Artifacts) Monitor(adapter *bluetooth.Adapter, appActive chan struct{}) {
+	ticker := time.NewTicker(1 * time.Second)
+	select {
+	case <-appActive:
+		return
+	case <-ticker.C:
+		if a.Ready() {
+			// Connect to skull
+			a.connectToSkull(adapter)
+		}
 	}
 }
 

@@ -22,9 +22,8 @@ type HTTPResponse struct {
 
 // ServerInstance is an instance of server
 type ServerInstance struct {
-	ServerPort     int
-	TableArtifacts artifacts.Artifacts
-	Skull          *management.Skull
+	ServerPort int
+	Skull      *management.Skull
 }
 
 func (server *ServerInstance) waitForExit() {
@@ -61,6 +60,9 @@ func (server *ServerInstance) Run(appConfig *config.AppConfiguration) {
 	}
 
 	// Load up artifacts
+	tableArtifacts := artifacts.Artifacts{}
+
+	go tableArtifacts.SetupArtifacts(appConfig)
 
 	// Assuming we have opened everything
 	defer rpio.Close()
