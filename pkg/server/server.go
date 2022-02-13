@@ -8,6 +8,7 @@ import (
 	"syscall"
 
 	"github.com/milligan22963/circus/config"
+	"github.com/milligan22963/circus/pkg/artifacts"
 	"github.com/milligan22963/circus/pkg/management"
 	"github.com/milligan22963/circus/pkg/web"
 	"github.com/stianeikeland/go-rpio"
@@ -22,7 +23,7 @@ type HTTPResponse struct {
 // ServerInstance is an instance of server
 type ServerInstance struct {
 	ServerPort     int
-	TableArtifacts Artifacts
+	TableArtifacts artifacts.Artifacts
 	Skull          *management.Skull
 }
 
