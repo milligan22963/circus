@@ -41,10 +41,25 @@ func (server *ServerInstance) waitForExit() {
 	<-doneFlag
 }
 
+func (server *ServerInstance) waitForSkull(appConfig *config.AppConfiguration) {
+	select {
+	case skull := <-appConfig.Skull:
+		if skull != nil {
+			server.Skull = skull
+			appConfig.GetLogger().Information("the skull is ready")
+		}
+	case <-appConfig.AppActive:
+		return
+	}
+}
+
 func (server *ServerInstance) Run(appConfig *config.AppConfiguration) {
 	defer func() {
 		if server.Skull != nil {
-			server.Skull.Disconnect()
+			err := server.Skull.Disconnect()
+			if err != nil {
+				appConfig.GetLogger().Errorf("failed to disconnect from skull: %+v", err)
+			}
 		}
 	}()
 
@@ -52,6 +67,8 @@ func (server *ServerInstance) Run(appConfig *config.AppConfiguration) {
 
 	// server up the world
 	go webServer.SetupWebserver(appConfig)
+
+	go server.waitForSkull(appConfig)
 
 	// Setup gpio
 	err := rpio.Open()

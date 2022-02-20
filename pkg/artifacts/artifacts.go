@@ -2,7 +2,6 @@
 package artifacts
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/milligan22963/afmlog"
@@ -10,6 +9,10 @@ import (
 	"github.com/milligan22963/circus/pkg/management"
 	"github.com/stianeikeland/go-rpio"
 	"tinygo.org/x/bluetooth"
+)
+
+const (
+	artifactReadyWaitTime = 1
 )
 
 type Artifact struct {
@@ -20,6 +23,7 @@ type Artifact struct {
 type Artifacts struct {
 	artifacts []Artifact
 	logger    *afmlog.Log
+	connected bool
 }
 
 func CreateArtifact(pinID uint) (*Artifact, error) {
@@ -45,10 +49,12 @@ func (a *Artifacts) connectToSkull(adapter *bluetooth.Adapter) *management.Skull
 	ch := make(chan bluetooth.ScanResult, 1)
 
 	err := adapter.Scan(func(adapter *bluetooth.Adapter, result bluetooth.ScanResult) {
-		//fmt.Printf("%+v, payload: %+v", result, result.AdvertisementPayload)
 		if result.LocalName() == targetName {
-			fmt.Printf("Found it!")
-			adapter.StopScan()
+			a.logger.Information("Detected a skull")
+			err := adapter.StopScan()
+			if err != nil {
+				a.logger.Errorf("failed to stop bluetooth scanning: %+v", err)
+			}
 			ch <- result
 		}
 	})
@@ -71,20 +77,25 @@ func (a *Artifacts) SetupArtifacts(appConfig *config.AppConfiguration) {
 	a.logger = appConfig.GetLogger()
 
 	// create each of the artifacts
-	go a.Monitor(appConfig.Adapter, appConfig.AppActive)
+	go a.Monitor(appConfig.Adapter, appConfig.AppActive, appConfig.Skull)
 
 	<-appConfig.AppActive
 }
 
-func (a *Artifacts) Monitor(adapter *bluetooth.Adapter, appActive chan struct{}) {
-	ticker := time.NewTicker(1 * time.Second)
+func (a *Artifacts) Monitor(adapter *bluetooth.Adapter, appActive chan struct{}, skull chan *management.Skull) {
+	ticker := time.NewTicker(artifactReadyWaitTime * time.Second)
 	select {
 	case <-appActive:
 		return
 	case <-ticker.C:
-		if a.Ready() {
+		if a.Ready() && !a.connected {
 			// Connect to skull
-			a.connectToSkull(adapter)
+			a.logger.Information("connecting to skull.")
+			skullConnection := a.connectToSkull(adapter)
+			if skullConnection != nil {
+				skull <- skullConnection
+				a.connected = true
+			}
 		}
 	}
 }
@@ -97,4 +108,10 @@ func (a *Artifacts) Ready() bool {
 		}
 	}
 	return true
+}
+
+func (a *Artifacts) Reset() {
+	a.connected = false
+
+	// do we want to cache the artifacts so if they move after being detected, we don't care?
 }

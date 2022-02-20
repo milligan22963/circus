@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/milligan22963/afmlog"
+	"github.com/milligan22963/circus/pkg/management"
 	"gopkg.in/yaml.v2"
 	"tinygo.org/x/bluetooth"
 )
@@ -29,6 +30,7 @@ const DefaultConfigPath = "settings.yaml"
 type AppConfiguration struct {
 	CircusConfiguration CircusConfiguration
 	AppActive           chan struct{}
+	Skull               chan *management.Skull
 	Adapter             *bluetooth.Adapter
 }
 
@@ -55,6 +57,7 @@ func NewSiteConfiguration(configFile string) *AppConfiguration {
 	appConfig := &AppConfiguration{
 		CircusConfiguration: CircusConfiguration{},
 		AppActive:           make(chan struct{}),
+		Skull:               make(chan *management.Skull),
 		Adapter:             bluetooth.DefaultAdapter,
 	}
 

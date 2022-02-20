@@ -2,17 +2,16 @@
 
 version: '3'
 
-vars:
-  GREETING: Hello, World!
-
 tasks:
-  default:
+  test:
     cmds:
-      - echo "{{.GREETING}}"
-    silent: true
+      - go test -run ""
   build:
     cmds:
       - go build -o circus main.go
+  lint:
+    cmds:
+      - golangci-lint run
   run:
     cmds:
       - ./circus server --config settings.yaml
